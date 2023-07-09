@@ -33,7 +33,7 @@ class _ArtistPageState extends State<ArtistPage> {
     'topSongs': {},
     'albums': {},
     'singles': {},
-    'videos': [],
+    'videos': {},
     'featuredChannels': [],
     'relatedArtists': [],
     'artistBio': [],
@@ -163,7 +163,8 @@ class _ArtistPageState extends State<ArtistPage> {
               ['contents'][3]['musicCarouselShelfRenderer'];
 
           // get singles browseId to response
-          final singlesBrowseId = singles['header']['musicCarouselShelfBasicHeaderRenderer']
+          final singlesBrowseId = singles['header']
+                  ['musicCarouselShelfBasicHeaderRenderer']
               ['navigationEndpoint']['browseEndpoint']['browseId'];
 
           // get singles list
@@ -173,6 +174,25 @@ class _ArtistPageState extends State<ArtistPage> {
           response['singles'] = {
             'browseId': singlesBrowseId,
             'list': singlesList,
+          };
+
+          // Handle videos
+          final videos = data?['contents']['singleColumnBrowseResultsRenderer']
+                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
+              ['contents'][4]['musicCarouselShelfRenderer'];
+
+          // get videos browseId to response
+          final videosBrowseId = videos['header']
+                  ['musicCarouselShelfBasicHeaderRenderer']
+              ['navigationEndpoint']['browseEndpoint']['browseId'];
+
+          // get videos list
+          final videosList = videos['contents'];
+
+          // add videos to response
+          response['videos'] = {
+            'browseId': videosBrowseId,
+            'list': videosList,
           };
 
           return Scaffold(
@@ -689,6 +709,111 @@ class _ArtistPageState extends State<ArtistPage> {
                         ],
                       ),
                     ),
+
+                    // videos Carousel
+                    SizedBox(
+                      height: 200,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(top: 2.5),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: (response['videos']
+                                      as Map<String, dynamic>?)?['list']
+                                  ?.length ??
+                              0,
+                          itemBuilder: (context, index) {
+                            final videosList = (response['videos']
+                                as Map<String, dynamic>?)?['list'];
+                            final videosListTitle = videosList?[index]
+                                    ['musicTwoRowItemRenderer']['title']['runs']
+                                [0]['text'];
+                            final videosListArtist = videosList?[index]
+                                    ['musicTwoRowItemRenderer']['subtitle']
+                                ['runs'][0]['text'];
+                            final videosViews = videosList?[index]
+                                    ['musicTwoRowItemRenderer']['subtitle']
+                                ['runs'][2]['text'];
+                            final videosListThumbnail = videosList?[index]
+                                            ['musicTwoRowItemRenderer']
+                                        ['thumbnailRenderer']
+                                    ['musicThumbnailRenderer']['thumbnail']
+                                ['thumbnails'][0]['url'];
+                            return Container(
+                              width: 225,
+                              margin: EdgeInsets.only(
+                                  top: 12, bottom: 2.5, left: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // add rounded corners to image and cover
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Container(
+                                      width: 225,
+                                      height: 127,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        // add background color to list tile
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                            videosListThumbnail
+                                                    ?.toString() ??
+                                                '',
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: RichText(
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          text: TextSpan(
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: videosListTitle
+                                                        ?.toString() ??
+                                                    '',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    videosListArtist?.toString() ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    videosViews?.toString() ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  
                   ],
                 ),
               ),
