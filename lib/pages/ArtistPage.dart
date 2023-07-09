@@ -34,9 +34,9 @@ class _ArtistPageState extends State<ArtistPage> {
     'albums': {},
     'singles': {},
     'videos': {},
-    'featuredChannels': [],
-    'relatedArtists': [],
-    'artistBio': [],
+    'featuredChannels': {},
+    'relatedArtists': {},
+    'artistBio': {},
   };
 
   Future<Map<String, dynamic>> fetchData() async {
@@ -193,6 +193,40 @@ class _ArtistPageState extends State<ArtistPage> {
           response['videos'] = {
             'browseId': videosBrowseId,
             'list': videosList,
+          };
+
+          // add featured channels to response
+          final featuredChannels = data?['contents']['singleColumnBrowseResultsRenderer']
+                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
+              ['contents'][5]['musicCarouselShelfRenderer'];
+
+          
+          // add featured channels to response
+          response['featuredChannels'] = featuredChannels;
+
+          // add related artists to response
+          final relatedArtists = data?['contents']['singleColumnBrowseResultsRenderer']
+                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
+              ['contents'][6]['musicCarouselShelfRenderer'];
+
+          // add related artists to response
+          response['relatedArtists'] = relatedArtists;
+
+          // add artist bio to response
+          final artistBio = data?['contents']['singleColumnBrowseResultsRenderer']
+                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
+              ['contents'][7]['musicCarouselShelfRenderer'];
+
+          // get views counter 
+          final artistBioViews = artistBio['subheader']['runs'][0]['text'];
+
+          // get artist bio
+          final artistBioText = artistBio['description']['runs'][0]['text'];
+
+          // add artist bio to response
+          response['artistBio'] = {
+            'views': artistBioViews,
+            'text': artistBioText,
           };
 
           return Scaffold(
