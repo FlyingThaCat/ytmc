@@ -70,6 +70,7 @@ class _ArtistPageState extends State<ArtistPage> {
             ),
           );
         } else {
+          debugPrint(widget.artistPageId.toString());
           final data = snapshot.data;
 
           // Get thumbnails
@@ -145,7 +146,7 @@ class _ArtistPageState extends State<ArtistPage> {
           // get albums browseId to response
           final albumsBrowseId = albums['header']
                   ['musicCarouselShelfBasicHeaderRenderer']
-              ['navigationEndpoint']['browseEndpoint']['browseId'];
+              ['navigationEndpoint']?['browseEndpoint']?['browseId'];
 
           // get albums list
           final albumsList = albums['contents'];
@@ -461,8 +462,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                 ['thumbnails'][2]['url'];
                             return Container(
                               width: 160,
-                              margin: const EdgeInsets.only(
-                                  left: 10, top: 2.5, right: 10),
+                              margin: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
