@@ -225,10 +225,14 @@ class _ArtistPageState extends State<ArtistPage> {
           // get artist bio
           final artistBioText = artistBio['description']['runs'][0]['text'];
 
+          // make short bio
+          final artistBioShort = artistBioText.substring(0, 65) + '...';
+
           // add artist bio to response
           response['artistBio'] = {
             'views': artistBioViews,
             'text': artistBioText,
+            'short': artistBioShort,
           };
 
           return Scaffold(
@@ -1023,8 +1027,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                   ),
                                   const SizedBox(height: 15),
                                   Center(
-                                    child: Expanded(
-                                      child: RichText(
+                                    child: 
+                                      RichText(
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         text: TextSpan(
@@ -1041,7 +1045,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                           ],
                                         ),
                                       ),
-                                    ),
+                                    
                                   ),
                                 ],
                               ),
@@ -1074,74 +1078,90 @@ class _ArtistPageState extends State<ArtistPage> {
                           const EdgeInsets.only(left: 10, top: 2.5, right: 10),
                       child: Card(
                         shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        // show image with rounded corners using original image
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      (response['thumbnails']
-                                                  as List<dynamic>?)![0]['url']
-                                              ?.toString() ??
-                                          '',
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                          child: Stack(
+                            children: <Widget>[
+                              Image.network(
+                                response['originThumbnail']?.toString() ?? '',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 300,
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 1,
                                 child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.8),
+                                      ],
+                                    ),
+                                  ),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        response['artistName'].toString(),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            response['artistName'].toString(),
+                                            style: const TextStyle(
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: const Icon(
+                                              Icons.arrow_forward_rounded,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        ],
                                       ),
+                                      const SizedBox(height: 4),
                                       Text(
                                         (response['artistBio'] as Map<String,
-                                                    dynamic>?)!['views']
-                                                ?.toString() ??
-                                            "",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      Text(
-                                        (response['artistBio'] as Map<String,
-                                                    dynamic>?)!['text']
+                                                    dynamic>?)?['views']
                                                 ?.toString() ??
                                             '',
                                         style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        (response['artistBio'] as Map<String,
+                                                    dynamic>?)?['short']
+                                                ?.toString() ??
+                                            '',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
