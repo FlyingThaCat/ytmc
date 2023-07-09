@@ -32,7 +32,7 @@ class _ArtistPageState extends State<ArtistPage> {
     'latestRelease': {},
     'topSongs': {},
     'albums': {},
-    'singles': [],
+    'singles': {},
     'videos': [],
     'featuredChannels': [],
     'relatedArtists': [],
@@ -155,6 +155,24 @@ class _ArtistPageState extends State<ArtistPage> {
           response['albums'] = {
             'browseId': albumsBrowseId,
             'list': albumsList,
+          };
+
+          // Handle singles
+          final singles = data?['contents']['singleColumnBrowseResultsRenderer']
+                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
+              ['contents'][3]['musicCarouselShelfRenderer'];
+
+          // get singles browseId to response
+          final singlesBrowseId = singles['header']['musicCarouselShelfBasicHeaderRenderer']
+              ['navigationEndpoint']['browseEndpoint']['browseId'];
+
+          // get singles list
+          final singlesList = singles['contents'];
+
+          // add singles to response
+          response['singles'] = {
+            'browseId': singlesBrowseId,
+            'list': singlesList,
           };
 
           return Scaffold(
@@ -462,7 +480,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                 ['thumbnails'][2]['url'];
                             return Container(
                               width: 160,
-                              margin: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
+                              margin: EdgeInsets.only(
+                                  top: 12, bottom: 2.5, left: 16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -504,9 +523,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                                       PlaceholderAlignment
                                                           .middle,
                                                   child: Padding(
-                                                    padding:
-                                                        EdgeInsets.only(
-                                                            left: 5),
+                                                    padding: EdgeInsets.only(
+                                                        left: 5),
                                                     child: Icon(
                                                         Icons.explicit_rounded,
                                                         size: 14),
@@ -540,6 +558,129 @@ class _ArtistPageState extends State<ArtistPage> {
                         children: [
                           Text(
                             'Singles',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Singles Carousel
+                    SizedBox(
+                      height: 230,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(top: 2.5),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: (response['singles']
+                                      as Map<String, dynamic>?)?['list']
+                                  ?.length ??
+                              0,
+                          itemBuilder: (context, index) {
+                            final singlesList = (response['singles']
+                                as Map<String, dynamic>?)?['list'];
+                            final singlesListTitle = singlesList?[index]
+                                    ['musicTwoRowItemRenderer']['title']['runs']
+                                [0]['text'];
+                            final singlesListYear = singlesList?[index]
+                                    ['musicTwoRowItemRenderer']['subtitle']
+                                ['runs'][0]['text'];
+                            final singlesExplicit = singlesList?[index]
+                                                ['musicTwoRowItemRenderer']
+                                            ['subtitleBadges']?[0]
+                                        ['musicInlineBadgeRenderer']
+                                    ['accessibilityData']['accessibilityData']
+                                ['label'];
+                            final singlesListThumbnail = singlesList?[index]
+                                            ['musicTwoRowItemRenderer']
+                                        ['thumbnailRenderer']
+                                    ['musicThumbnailRenderer']['thumbnail']
+                                ['thumbnails'][2]['url'];
+                            return Container(
+                              width: 160,
+                              margin: EdgeInsets.only(
+                                  top: 12, bottom: 2.5, left: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 160,
+                                    height: 160,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      // add background color to list tile
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          singlesListThumbnail?.toString() ??
+                                              '',
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: RichText(
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          text: TextSpan(
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: singlesListTitle
+                                                        ?.toString() ??
+                                                    '',
+                                              ),
+                                              if (singlesExplicit == 'Explicit')
+                                                const WidgetSpan(
+                                                  alignment:
+                                                      PlaceholderAlignment
+                                                          .middle,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 5),
+                                                    child: Icon(
+                                                        Icons.explicit_rounded,
+                                                        size: 14),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    singlesListYear?.toString() ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // videos
+                    const Padding(
+                      padding: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Videos',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
