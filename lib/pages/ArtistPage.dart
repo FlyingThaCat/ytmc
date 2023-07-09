@@ -196,28 +196,30 @@ class _ArtistPageState extends State<ArtistPage> {
           };
 
           // add featured channels to response
-          final featuredChannels = data?['contents']['singleColumnBrowseResultsRenderer']
-                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-              ['contents'][5]['musicCarouselShelfRenderer'];
+          final featuredChannels = data?['contents']
+                      ['singleColumnBrowseResultsRenderer']['tabs'][0]
+                  ['tabRenderer']['content']['sectionListRenderer']['contents']
+              [5]['musicCarouselShelfRenderer'];
 
-          
           // add featured channels to response
           response['featuredChannels'] = featuredChannels;
 
           // add related artists to response
-          final relatedArtists = data?['contents']['singleColumnBrowseResultsRenderer']
-                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-              ['contents'][6]['musicCarouselShelfRenderer'];
+          final relatedArtists = data?['contents']
+                      ['singleColumnBrowseResultsRenderer']['tabs'][0]
+                  ['tabRenderer']['content']['sectionListRenderer']['contents']
+              [6]['musicCarouselShelfRenderer'];
 
           // add related artists to response
           response['relatedArtists'] = relatedArtists;
 
           // add artist bio to response
-          final artistBio = data?['contents']['singleColumnBrowseResultsRenderer']
-                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-              ['contents'][7]['musicDescriptionShelfRenderer'];
+          final artistBio = data?['contents']
+                      ['singleColumnBrowseResultsRenderer']['tabs'][0]
+                  ['tabRenderer']['content']['sectionListRenderer']['contents']
+              [7]['musicDescriptionShelfRenderer'];
 
-          // get views counter 
+          // get views counter
           final artistBioViews = artistBio['subheader']['runs'][0]['text'];
 
           // get artist bio
@@ -793,8 +795,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                         // add background color to list tile
                                         image: DecorationImage(
                                           image: NetworkImage(
-                                            videosListThumbnail
-                                                    ?.toString() ??
+                                            videosListThumbnail?.toString() ??
                                                 '',
                                           ),
                                           fit: BoxFit.cover,
@@ -847,7 +848,7 @@ class _ArtistPageState extends State<ArtistPage> {
                         ),
                       ),
                     ),
-                  
+
                     // Featured channels
                     const Padding(
                       padding: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
@@ -866,7 +867,7 @@ class _ArtistPageState extends State<ArtistPage> {
 
                     // Featured channels Carousel
                     SizedBox(
-                      height: 200,
+                      height: 230,
                       child: SizedBox(
                         width: double.infinity,
                         child: ListView.builder(
@@ -878,18 +879,21 @@ class _ArtistPageState extends State<ArtistPage> {
                                   ?.length ??
                               0,
                           itemBuilder: (context, index) {
-                            final featuredChannelsList = (response['featuredChannels']
-                                as Map<String, dynamic>?)?['contents'];
-                            final featuredChannelsListTitle = featuredChannelsList?[index]
-                                    ['musicTwoRowItemRenderer']['title']['runs']
-                                [0]['text'];
-                            final featuredChannelsListThumbnail = featuredChannelsList?[index]
-                                            ['musicTwoRowItemRenderer']
-                                        ['thumbnailRenderer']
-                                    ['musicThumbnailRenderer']['thumbnail']
-                                ['thumbnails'][0]['url'];
+                            final featuredChannelsList =
+                                (response['featuredChannels']
+                                    as Map<String, dynamic>?)?['contents'];
+                            final featuredChannelsListTitle =
+                                featuredChannelsList?[index]
+                                        ['musicTwoRowItemRenderer']['title']
+                                    ['runs'][0]['text'];
+                            final featuredChannelsListThumbnail =
+                                featuredChannelsList?[index]
+                                                ['musicTwoRowItemRenderer']
+                                            ['thumbnailRenderer']
+                                        ['musicThumbnailRenderer']['thumbnail']
+                                    ['thumbnails'][2]['url'];
                             return Container(
-                              width: 225,
+                              width: 160,
                               margin: EdgeInsets.only(
                                   top: 12, bottom: 2.5, left: 16),
                               child: Column(
@@ -899,8 +903,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10.0),
                                     child: Container(
-                                      width: 225,
-                                      height: 127,
+                                      width: 160,
+                                      height: 160,
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(10.0),
@@ -966,7 +970,7 @@ class _ArtistPageState extends State<ArtistPage> {
 
                     // Related artists Carousel
                     SizedBox(
-                      height: 200,
+                      height: 210,
                       child: SizedBox(
                         width: double.infinity,
                         child: ListView.builder(
@@ -978,32 +982,33 @@ class _ArtistPageState extends State<ArtistPage> {
                                   ?.length ??
                               0,
                           itemBuilder: (context, index) {
-                            final relatedArtistsList = (response['relatedArtists']
-                                as Map<String, dynamic>?)?['contents'];
-                            final relatedArtistsListTitle = relatedArtistsList?[index]
-                                    ['musicTwoRowItemRenderer']['title']['runs']
-                                [0]['text'];
-                            final relatedArtistsListThumbnail = relatedArtistsList?[index]
-                                            ['musicTwoRowItemRenderer']
-                                        ['thumbnailRenderer']
-                                    ['musicThumbnailRenderer']['thumbnail']
-                                ['thumbnails'][0]['url'];
+                            final relatedArtistsList =
+                                (response['relatedArtists']
+                                    as Map<String, dynamic>?)?['contents'];
+                            final relatedArtistsListTitle =
+                                relatedArtistsList?[index]
+                                        ['musicTwoRowItemRenderer']['title']
+                                    ['runs'][0]['text'];
+                            final relatedArtistsListThumbnail =
+                                relatedArtistsList?[index]
+                                                ['musicTwoRowItemRenderer']
+                                            ['thumbnailRenderer']
+                                        ['musicThumbnailRenderer']['thumbnail']
+                                    ['thumbnails'][1]['url'];
                             return Container(
-                              width: 225,
+                              // make rounded image
+                              width: 160,
                               margin: EdgeInsets.only(
                                   top: 12, bottom: 2.5, left: 16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // add rounded corners to image and cover
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(100.0),
                                     child: Container(
-                                      width: 225,
-                                      height: 127,
+                                      width: 160,
+                                      height: 160,
                                       decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
                                         // add background color to list tile
                                         image: DecorationImage(
                                           image: NetworkImage(
@@ -1016,34 +1021,124 @@ class _ArtistPageState extends State<ArtistPage> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: RichText(
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          text: TextSpan(
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                text: relatedArtistsListTitle
-                                                        ?.toString() ??
-                                                    '',
-                                              ),
-                                            ],
+                                  const SizedBox(height: 15),
+                                  Center(
+                                    child: Expanded(
+                                      child: RichText(
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        text: TextSpan(
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
                                           ),
+                                          children: [
+                                            TextSpan(
+                                              text: relatedArtistsListTitle
+                                                      ?.toString() ??
+                                                  '',
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ],
                               ),
                             );
                           },
+                        ),
+                      ),
+                    ),
+
+                    // Artist bio
+                    const Padding(
+                      padding: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Artist bio',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Artist bio
+                    Container(
+                      width: double.infinity,
+                      margin:
+                          const EdgeInsets.only(left: 10, top: 2.5, right: 10),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                      (response['thumbnails']
+                                                  as List<dynamic>?)![0]['url']
+                                              ?.toString() ??
+                                          '',
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        response['artistName'].toString(),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        (response['artistBio'] as Map<String,
+                                                    dynamic>?)!['views']
+                                                ?.toString() ??
+                                            "",
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Text(
+                                        (response['artistBio'] as Map<String,
+                                                    dynamic>?)!['text']
+                                                ?.toString() ??
+                                            '',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
