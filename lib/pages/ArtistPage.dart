@@ -215,7 +215,7 @@ class _ArtistPageState extends State<ArtistPage> {
           // add artist bio to response
           final artistBio = data?['contents']['singleColumnBrowseResultsRenderer']
                   ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-              ['contents'][7]['musicCarouselShelfRenderer'];
+              ['contents'][7]['musicDescriptionShelfRenderer'];
 
           // get views counter 
           final artistBioViews = artistBio['subheader']['runs'][0]['text'];
