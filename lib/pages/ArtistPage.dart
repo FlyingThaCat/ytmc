@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../data/constant.dart';
+import '../data/construct.dart';
+
 class ArtistPage extends StatefulWidget {
   final String? artistPageId;
   const ArtistPage({Key? key, required this.artistPageId}) : super(key: key);
@@ -11,19 +14,7 @@ class ArtistPage extends StatefulWidget {
 }
 
 class _ArtistPageState extends State<ArtistPage> {
-  final Map<String, dynamic> body = {
-    'context': {
-      'client': {
-        'hl': 'en',
-        'gl': 'US',
-        'clientName': 'ANDROID_MUSIC',
-        'clientVersion': '5.26.1',
-        'platform': 'MOBILE',
-        'androidSdkVersion': '31'
-      },
-      'user': {'lockedSafetyMode': false}
-    },
-  };
+  final body = constructAPIBody();
 
   final response = {
     'thumbnails': [],
@@ -43,8 +34,7 @@ class _ArtistPageState extends State<ArtistPage> {
     // append browseId to body
     body['browseId'] = widget.artistPageId;
     final response = await http.post(
-      Uri.parse(
-          'https://music.youtube.com/youtubei/v1/browse?key=AIzaSyAOghZGza2MQSZkY_zfZ370N-PUdXEo8AI'),
+      Uri.parse(ytmBrowseURL),
       headers: {'content-type': 'application/json'},
       body: jsonEncode(body),
     );
@@ -1121,7 +1111,9 @@ class _ArtistPageState extends State<ArtistPage> {
                                             ),
                                           ),
                                           IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              
+                                            },
                                             icon: const Icon(
                                               Icons.arrow_forward_rounded,
                                               color: Colors.white,

@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'data/constant.dart';
 import 'package:http/http.dart' as http;
 
 // PAGES RELATED
+import 'data/construct.dart';
 import 'pages/ArtistPage.dart';
 
 void main() {
@@ -51,20 +53,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final SearchController controller = SearchController();
 
-  final body = {
-    'input': '',
-    'context': {
-      'client': {
-        'hl': 'en',
-        'gl': 'US',
-        'clientName': 'ANDROID_MUSIC',
-        'clientVersion': '5.26.1',
-        'platform': 'MOBILE',
-        'androidSdkVersion': '31'
-      },
-      'user': {'lockedSafetyMode': false}
-    }
-  };
+  final body = constructAPIBody();
 
   @override
   Widget build(BuildContext context) {
@@ -96,12 +85,12 @@ class _HomePageState extends State<HomePage> {
                 return [
                   FutureBuilder(
                     future: http.post(
-                      Uri.parse(
-                          'https://music.youtube.com/youtubei/v1/music/get_search_suggestions?key=AIzaSyAOghZGza2MQSZkY_zfZ370N-PUdXEo8AI'),
+                      Uri.parse(ytmSearchSuggestURL),
                       headers: {'content-type': 'application/json'},
                       body: jsonEncode(body),
                     ),
                     builder: (context, snapshot) {
+                      
                       // get the response instance
                       if (snapshot.hasData) {
                         final response = jsonDecode(snapshot.data!.body);
@@ -202,8 +191,8 @@ class _HomePageState extends State<HomePage> {
                               ['browseEndpointContextMusicConfig']['pageType'];
                           final artistPageId = musicSuggestion[i]
                                       ['musicTwoColumnItemRenderer']
-                                  ['navigationEndpoint']?['browseEndpoint']?
-                              ['browseId'];
+                                  ['navigationEndpoint']?['browseEndpoint']
+                              ?['browseId'];
                           if (pageType == 'MUSIC_PAGE_TYPE_ARTIST') {
                             musicObject['isArtist'] = 'true';
                             musicObject['artistPageId'] = artistPageId;
@@ -281,7 +270,8 @@ class _HomePageState extends State<HomePage> {
                                                 musicSuggestionsList[index]
                                                     ['artistPageId'],
                                           ),
-                                        ),);
+                                        ),
+                                      );
                                     }
                                   },
 
