@@ -1017,25 +1017,23 @@ class _ArtistPageState extends State<ArtistPage> {
                                   ),
                                   const SizedBox(height: 15),
                                   Center(
-                                    child: 
-                                      RichText(
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          children: [
-                                            TextSpan(
-                                              text: relatedArtistsListTitle
-                                                      ?.toString() ??
-                                                  '',
-                                            ),
-                                          ],
+                                    child: RichText(
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
                                         ),
+                                        children: [
+                                          TextSpan(
+                                            text: relatedArtistsListTitle
+                                                    ?.toString() ??
+                                                '',
+                                          ),
+                                        ],
                                       ),
-                                    
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1112,7 +1110,37 @@ class _ArtistPageState extends State<ArtistPage> {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                              
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                      response['artistName']
+                                                          .toString(),
+                                                    ),
+                                                    content: Text(
+                                                      (response['artistBio']
+                                                                      as Map<
+                                                                          String,
+                                                                          dynamic>?)?[
+                                                                  'text']
+                                                              ?.toString() ??
+                                                          '',
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child:
+                                                            const Text('Close'),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
                                             },
                                             icon: const Icon(
                                               Icons.arrow_forward_rounded,
