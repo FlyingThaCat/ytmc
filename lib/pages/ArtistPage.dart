@@ -351,11 +351,13 @@ class _ArtistPageState extends State<ArtistPage> {
                                         ['musicInlineBadgeRenderer']
                                     ['accessibilityData']['accessibilityData']
                                 ['label'];
+
+                            // TODO: RangeError (RangeError (index): Invalid value: Not in inclusive range 0..1: 2) 
                             final albumsListThumbnail = albumsList?[index]
                                             ['musicTwoRowItemRenderer']
                                         ['thumbnailRenderer']
                                     ['musicThumbnailRenderer']['thumbnail']
-                                ['thumbnails'][2]['url'];
+                                ['thumbnails'][1]['url'];
                             return Container(
                               width: 160,
                               margin: EdgeInsets.only(
