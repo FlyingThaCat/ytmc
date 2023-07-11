@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../data/constant.dart';
 import '../data/construct.dart';
+import '../data/translator.dart';
 
 class ArtistPage extends StatefulWidget {
   final String? artistPageId;
@@ -63,167 +64,16 @@ class _ArtistPageState extends State<ArtistPage> {
           debugPrint(widget.artistPageId.toString());
           final data = snapshot.data;
 
-          // Get thumbnails
-          final thumbnails = data?['header']['musicVisualHeaderRenderer']
-                  ['thumbnail']['musicThumbnailRenderer']['thumbnail']
-              ['thumbnails'];
-          response['thumbnails'] = thumbnails;
+          final thumbails = extractThumbnails(data);
+          final artist = extractArtist(data);
+          final latestRelease = extractLatestRelease(data);
+          final topSongs = extractTopSongs(data);
+          final albums = extractAlbums(data);
+          final singles = extractSingles(data);
+          final videos = extractVideos(data);
+          final featuredOn = extractFeaturedOn(data);
+          final relatedArtists = extractRelatedArtists(data);
 
-          // Get origin thumbnail by removing the =w1440-h810-p-l90-rj from the url
-          final originThumbnail = thumbnails[0]['url'].toString().split('=');
-          response['originThumbnail'] = originThumbnail[0];
-
-          // Get artist name
-          final artistName = data?['header']['musicVisualHeaderRenderer']
-              ['title']['runs'][0]['text'];
-          response['artistName'] = artistName;
-
-          // Handle latest release
-          final latestRelease = data?['contents']
-                          ['singleColumnBrowseResultsRenderer']['tabs'][0]
-                      ['tabRenderer']['content']['sectionListRenderer']
-                  ['contents'][0]['musicSpotlightShelfRenderer']['contents'][0]
-              ['musicSpotlightItemRenderer'];
-          // Get latest release thumbnails
-          final latestReleaseThumbnails = latestRelease['thumbnailRenderer']
-              ['musicThumbnailRenderer']['thumbnail']['thumbnails'];
-          // Get latest release title
-          final latestReleaseTitle = latestRelease['title']['runs'][0]['text'];
-          // Get latest release type
-          final latestReleaseType =
-              latestRelease['subtitle']['runs'][0]['text'];
-          // Get latest release year
-          final latestReleaseYear =
-              latestRelease['subtitle']['runs'][2]['text'];
-          // Get latest release browseId
-          final latestReleaseBrowseId =
-              latestRelease['navigationEndpoint']['browseEndpoint']['browseId'];
-
-          // Add latest release to response
-          response['latestRelease'] = {
-            'thumbnails': latestReleaseThumbnails,
-            'title': latestReleaseTitle,
-            'releaseType': latestReleaseType,
-            'releaseYear': latestReleaseYear,
-            'browseId': latestReleaseBrowseId,
-          };
-
-          // Handle top songs
-          final topSongs = data?['contents']
-                      ['singleColumnBrowseResultsRenderer']['tabs'][0]
-                  ['tabRenderer']['content']['sectionListRenderer']['contents']
-              [1]['musicShelfRenderer'];
-
-          // Add top songs browseId to response
-          final topSongsBrowseId = topSongs['moreContentButton']
-                  ['buttonRenderer']['navigationEndpoint']['browseEndpoint']
-              ['browseId'];
-
-          // Get top songs
-          final topSongsList = topSongs['contents'];
-
-          // Add top songs to response
-          response['topSongs'] = {
-            'browseId': topSongsBrowseId,
-            'list': topSongsList,
-          };
-
-          // Handle albums
-          final albums = data?['contents']['singleColumnBrowseResultsRenderer']
-                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-              ['contents'][2]['musicCarouselShelfRenderer'];
-
-          // get albums browseId to response
-          final albumsBrowseId = albums['header']
-                  ['musicCarouselShelfBasicHeaderRenderer']
-              ['navigationEndpoint']?['browseEndpoint']?['browseId'];
-
-          // get albums list
-          final albumsList = albums['contents'];
-
-          // add albums to response
-          response['albums'] = {
-            'browseId': albumsBrowseId,
-            'list': albumsList,
-          };
-
-          // Handle singles
-          final singles = data?['contents']['singleColumnBrowseResultsRenderer']
-                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-              ['contents'][3]['musicCarouselShelfRenderer'];
-
-          // get singles browseId to response
-          final singlesBrowseId = singles['header']
-                  ['musicCarouselShelfBasicHeaderRenderer']
-              ['navigationEndpoint']['browseEndpoint']['browseId'];
-
-          // get singles list
-          final singlesList = singles['contents'];
-
-          // add singles to response
-          response['singles'] = {
-            'browseId': singlesBrowseId,
-            'list': singlesList,
-          };
-
-          // Handle videos
-          final videos = data?['contents']['singleColumnBrowseResultsRenderer']
-                  ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-              ['contents'][4]['musicCarouselShelfRenderer'];
-
-          // get videos browseId to response
-          final videosBrowseId = videos['header']
-                  ['musicCarouselShelfBasicHeaderRenderer']
-              ['navigationEndpoint']['browseEndpoint']['browseId'];
-
-          // get videos list
-          final videosList = videos['contents'];
-
-          // add videos to response
-          response['videos'] = {
-            'browseId': videosBrowseId,
-            'list': videosList,
-          };
-
-          // add featured channels to response
-          final featuredChannels = data?['contents']
-                      ['singleColumnBrowseResultsRenderer']['tabs'][0]
-                  ['tabRenderer']['content']['sectionListRenderer']['contents']
-              [5]['musicCarouselShelfRenderer'];
-
-          // add featured channels to response
-          response['featuredChannels'] = featuredChannels;
-
-          // add related artists to response
-          final relatedArtists = data?['contents']
-                      ['singleColumnBrowseResultsRenderer']['tabs'][0]
-                  ['tabRenderer']['content']['sectionListRenderer']['contents']
-              [6]['musicCarouselShelfRenderer'];
-
-          // add related artists to response
-          response['relatedArtists'] = relatedArtists;
-
-          // add artist bio to response
-          final artistBio = data?['contents']
-                      ['singleColumnBrowseResultsRenderer']['tabs'][0]
-                  ['tabRenderer']['content']['sectionListRenderer']['contents']
-              [7]['musicDescriptionShelfRenderer'];
-
-          // get views counter
-          final artistBioViews = artistBio['subheader']['runs'][0]['text'];
-
-          // get artist bio
-          final artistBioText = artistBio['description']['runs'][0]['text'];
-
-          // make short bio
-          final artistBioShort = artistBioText.substring(0, 65) + '...';
-
-          // add artist bio to response
-          response['artistBio'] = {
-            'views': artistBioViews,
-            'text': artistBioText,
-            'short': artistBioShort,
-          };
 
           return Scaffold(
             body: SingleChildScrollView(
@@ -237,7 +87,7 @@ class _ArtistPageState extends State<ArtistPage> {
                       flexibleSpace: Stack(
                         children: <Widget>[
                           Image.network(
-                            response['originThumbnail']?.toString() ?? '',
+                            thumbails['originThumbnail'],
                             fit: BoxFit.cover,
                             width: double.infinity,
                             height: 300,
@@ -265,7 +115,7 @@ class _ArtistPageState extends State<ArtistPage> {
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Text(
-                                response['artistName'].toString(),
+                                artist['artistName'],
                                 style: const TextStyle(
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold,
@@ -333,11 +183,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                   borderRadius: BorderRadius.circular(10.0),
                                   image: DecorationImage(
                                     image: NetworkImage(
-                                      (response['latestRelease'] as Map<String,
-                                                      dynamic>?)?['thumbnails']
-                                                  ?[2]['url']
-                                              ?.toString() ??
-                                          '',
+                                      latestRelease['latestReleaseThumbnails']
+                                              [1]['url'],
                                     ),
                                     fit: BoxFit.cover,
                                   ),
@@ -353,32 +200,21 @@ class _ArtistPageState extends State<ArtistPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        (response['latestRelease'] as Map<
-                                                    String, dynamic>?)?['title']
-                                                ?.toString() ??
-                                            '',
+                                        latestRelease['latestReleaseTitle'],
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       Text(
-                                        (response['latestRelease'] as Map<
-                                                    String,
-                                                    dynamic>?)?['releaseType']
-                                                ?.toString() ??
-                                            '',
+                                        latestRelease['latestReleaseType'],
                                         style: const TextStyle(
                                           fontSize: 14,
                                           color: Colors.grey,
                                         ),
                                       ),
                                       Text(
-                                        (response['latestRelease'] as Map<
-                                                    String,
-                                                    dynamic>?)?['releaseYear']
-                                                ?.toString() ??
-                                            '',
+                                        latestRelease['latestReleaseYear'],   
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,
@@ -410,6 +246,7 @@ class _ArtistPageState extends State<ArtistPage> {
                         ),
                       ),
                     ),
+
                     // Latest release
                     const Padding(
                       padding: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
@@ -429,13 +266,9 @@ class _ArtistPageState extends State<ArtistPage> {
                       padding: const EdgeInsets.only(top: 2.5),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: (response['topSongs']
-                                  as Map<String, dynamic>?)?['list']
-                              ?.length ??
-                          0,
+                      itemCount: topSongs['topSongsList']?.length ?? 0,
                       itemBuilder: (context, index) {
-                        final topSongsList = (response['topSongs']
-                            as Map<String, dynamic>?)?['list'];
+                        final topSongsList = topSongs['topSongsList'];
                         final topSongsListTitle = topSongsList?[index]
                                 ['musicTwoColumnItemRenderer']['title']['runs']
                             [0]['text'];
@@ -504,13 +337,9 @@ class _ArtistPageState extends State<ArtistPage> {
                           padding: const EdgeInsets.only(top: 2.5),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: (response['albums']
-                                      as Map<String, dynamic>?)?['list']
-                                  ?.length ??
-                              0,
+                          itemCount: albums['albumsList']?.length ?? 0,
                           itemBuilder: (context, index) {
-                            final albumsList = (response['albums']
-                                as Map<String, dynamic>?)?['list'];
+                            final albumsList = albums['albumsList'];
                             final albumsListTitle = albumsList?[index]
                                     ['musicTwoRowItemRenderer']['title']['runs']
                                 [0]['text'];
@@ -626,13 +455,9 @@ class _ArtistPageState extends State<ArtistPage> {
                           padding: const EdgeInsets.only(top: 2.5),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: (response['singles']
-                                      as Map<String, dynamic>?)?['list']
-                                  ?.length ??
-                              0,
+                          itemCount: singles['singlesList']?.length ?? 0,
                           itemBuilder: (context, index) {
-                            final singlesList = (response['singles']
-                                as Map<String, dynamic>?)?['list'];
+                            final singlesList = singles['singlesList'];
                             final singlesListTitle = singlesList?[index]
                                     ['musicTwoRowItemRenderer']['title']['runs']
                                 [0]['text'];
@@ -749,13 +574,9 @@ class _ArtistPageState extends State<ArtistPage> {
                           padding: const EdgeInsets.only(top: 2.5),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: (response['videos']
-                                      as Map<String, dynamic>?)?['list']
-                                  ?.length ??
-                              0,
+                          itemCount: videos['videosList']?.length ?? 0,
                           itemBuilder: (context, index) {
-                            final videosList = (response['videos']
-                                as Map<String, dynamic>?)?['list'];
+                            final videosList = videos['videosList'];
                             final videosListTitle = videosList?[index]
                                     ['musicTwoRowItemRenderer']['title']['runs']
                                 [0]['text'];
@@ -868,14 +689,9 @@ class _ArtistPageState extends State<ArtistPage> {
                           padding: const EdgeInsets.only(top: 2.5),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: (response['featuredChannels']
-                                      as Map<String, dynamic>?)?['contents']
-                                  ?.length ??
-                              0,
+                          itemCount: featuredOn['featuredOnList']?.length ?? 0,
                           itemBuilder: (context, index) {
-                            final featuredChannelsList =
-                                (response['featuredChannels']
-                                    as Map<String, dynamic>?)?['contents'];
+                            final featuredChannelsList = featuredOn['featuredOnList']['contents'];
                             final featuredChannelsListTitle =
                                 featuredChannelsList?[index]
                                         ['musicTwoRowItemRenderer']['title']
@@ -971,14 +787,9 @@ class _ArtistPageState extends State<ArtistPage> {
                           padding: const EdgeInsets.only(top: 2.5),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: (response['relatedArtists']
-                                      as Map<String, dynamic>?)?['contents']
-                                  ?.length ??
-                              0,
+                          itemCount: relatedArtists['relatedArtistsList']['contents']?.length ?? 0,
                           itemBuilder: (context, index) {
-                            final relatedArtistsList =
-                                (response['relatedArtists']
-                                    as Map<String, dynamic>?)?['contents'];
+                            final relatedArtistsList = relatedArtists['relatedArtistsList']['contents'];
                             final relatedArtistsListTitle =
                                 relatedArtistsList?[index]
                                         ['musicTwoRowItemRenderer']['title']
@@ -992,7 +803,7 @@ class _ArtistPageState extends State<ArtistPage> {
                             return Container(
                               // make rounded image
                               width: 160,
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                   top: 12, bottom: 2.5, left: 16),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1073,7 +884,7 @@ class _ArtistPageState extends State<ArtistPage> {
                           child: Stack(
                             children: <Widget>[
                               Image.network(
-                                response['originThumbnail']?.toString() ?? '',
+                                thumbails['originThumbnail'],
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: 300,
@@ -1081,7 +892,7 @@ class _ArtistPageState extends State<ArtistPage> {
                               Positioned(
                                 bottom: 0,
                                 left: 0,
-                                right: 1,
+                                right: 0,
                                 child: Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
@@ -1101,7 +912,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                       Row(
                                         children: [
                                           Text(
-                                            response['artistName'].toString(),
+                                            artist['artistName'],
                                             style: const TextStyle(
                                               fontSize: 30,
                                               fontWeight: FontWeight.bold,
@@ -1116,17 +927,11 @@ class _ArtistPageState extends State<ArtistPage> {
                                                     (BuildContext context) {
                                                   return AlertDialog(
                                                     title: Text(
-                                                      response['artistName']
-                                                          .toString(),
+                                                      artist['artistName'],
                                                     ),
                                                     content: Text(
-                                                      (response['artistBio']
-                                                                      as Map<
-                                                                          String,
-                                                                          dynamic>?)?[
-                                                                  'text']
-                                                              ?.toString() ??
-                                                          '',
+                                                      artist[
+                                                          'artistBioContent'],
                                                     ),
                                                     actions: [
                                                       TextButton(
@@ -1151,10 +956,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        (response['artistBio'] as Map<String,
-                                                    dynamic>?)?['views']
-                                                ?.toString() ??
-                                            '',
+                                        artist['artistBioViewCounter'],
                                         style: const TextStyle(
                                           fontSize: 14,
                                           color: Colors.white,
@@ -1162,10 +964,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        (response['artistBio'] as Map<String,
-                                                    dynamic>?)?['short']
-                                                ?.toString() ??
-                                            '',
+                                        artist['artistBioContentShort'],
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
