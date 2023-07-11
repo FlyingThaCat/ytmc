@@ -74,7 +74,6 @@ class _ArtistPageState extends State<ArtistPage> {
           final featuredOn = extractFeaturedOn(data);
           final relatedArtists = extractRelatedArtists(data);
 
-
           return Scaffold(
             body: SingleChildScrollView(
               child: Center(
@@ -184,7 +183,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                   image: DecorationImage(
                                     image: NetworkImage(
                                       latestRelease['latestReleaseThumbnails']
-                                              [1]['url'],
+                                          [1]['url'],
                                     ),
                                     fit: BoxFit.cover,
                                   ),
@@ -214,7 +213,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                         ),
                                       ),
                                       Text(
-                                        latestRelease['latestReleaseYear'],   
+                                        latestRelease['latestReleaseYear'],
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,
@@ -691,7 +690,8 @@ class _ArtistPageState extends State<ArtistPage> {
                           scrollDirection: Axis.horizontal,
                           itemCount: featuredOn['featuredOnList']?.length ?? 0,
                           itemBuilder: (context, index) {
-                            final featuredChannelsList = featuredOn['featuredOnList']['contents'];
+                            final featuredChannelsList =
+                                featuredOn['featuredOnList']['contents'];
                             final featuredChannelsListTitle =
                                 featuredChannelsList?[index]
                                         ['musicTwoRowItemRenderer']['title']
@@ -787,9 +787,14 @@ class _ArtistPageState extends State<ArtistPage> {
                           padding: const EdgeInsets.only(top: 2.5),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: relatedArtists['relatedArtistsList']['contents']?.length ?? 0,
+                          itemCount: relatedArtists['relatedArtistsList']
+                                      ['contents']
+                                  ?.length ??
+                              0,
                           itemBuilder: (context, index) {
-                            final relatedArtistsList = relatedArtists['relatedArtistsList']['contents'];
+                            final relatedArtistsList =
+                                relatedArtists['relatedArtistsList']
+                                    ['contents'];
                             final relatedArtistsListTitle =
                                 relatedArtistsList?[index]
                                         ['musicTwoRowItemRenderer']['title']
@@ -800,53 +805,71 @@ class _ArtistPageState extends State<ArtistPage> {
                                             ['thumbnailRenderer']
                                         ['musicThumbnailRenderer']['thumbnail']
                                     ['thumbnails'][1]['url'];
-                            return Container(
-                              // make rounded image
-                              width: 160,
-                              margin: const EdgeInsets.only(
-                                  top: 12, bottom: 2.5, left: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(100.0),
-                                    child: Container(
-                                      width: 160,
-                                      height: 160,
-                                      decoration: BoxDecoration(
-                                        // add background color to list tile
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                            relatedArtistsListThumbnail
-                                                    ?.toString() ??
-                                                '',
+                            return GestureDetector(
+                              onTap: () {
+                                // go to artist page
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ArtistPage(
+                                      artistPageId:
+                                          relatedArtistsList?[index]
+                                                  ['musicTwoRowItemRenderer']
+                                              ['navigationEndpoint']
+                                              ['browseEndpoint']['browseId'],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                // make rounded image
+                                width: 160,
+                                margin: const EdgeInsets.only(
+                                    top: 12, bottom: 2.5, left: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.circular(100.0),
+                                      child: Container(
+                                        width: 160,
+                                        height: 160,
+                                        decoration: BoxDecoration(
+                                          // add background color to list tile
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                              relatedArtistsListThumbnail
+                                                      ?.toString() ??
+                                                  '',
+                                            ),
+                                            fit: BoxFit.cover,
                                           ),
-                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 15),
-                                  Center(
-                                    child: RichText(
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: relatedArtistsListTitle
-                                                    ?.toString() ??
-                                                '',
+                                    const SizedBox(height: 15),
+                                    Center(
+                                      child: RichText(
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        text: TextSpan(
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
+                                          children: [
+                                            TextSpan(
+                                              text: relatedArtistsListTitle
+                                                      ?.toString() ??
+                                                  '',
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             );
                           },
