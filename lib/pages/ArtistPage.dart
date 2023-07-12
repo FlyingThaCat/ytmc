@@ -145,13 +145,21 @@ class _ArtistPageState extends State<ArtistPage> {
                       ],
                     ),
   
+                    if(latestRelease.isNotEmpty)
                     LatestReleaseComponent(latestRelease: latestRelease),
+                    if(topSongs.isNotEmpty)
                     TopSongsComponent(topSongs: topSongs),
+                    if(albums.isNotEmpty)
                     AlbumsComponent(albums: albums),
+                    if(singles.isNotEmpty)
                     SinglesComponent(singles: singles),
+                    if(videos.isNotEmpty)
                     VideosComponent(videos: videos),
+                    if(featuredPlaylists.isNotEmpty)
                     FeaturedPlaylistsComponent(featuredPlaylists: featuredPlaylists),
+                    if(relatedArtists.isNotEmpty)
                     RelatedArtistsComponent(relatedArtists: relatedArtists),
+                    if(artist.isNotEmpty)
                     ArtistBioComponent(artistBio: artist, thumbails: thumbails),
                   ],
                 ),
