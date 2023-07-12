@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:ytmc/components/artist_bio.dart';
-import 'package:ytmc/components/featured_playlists.dart';
-import 'package:ytmc/components/singles.dart';
-import 'package:ytmc/components/videos.dart';
 
+// import data
+import '../data/constant.dart';
+import '../data/construct.dart';
+import '../data/translator.dart';
+
+// import components
+import '../components/artist_bio.dart';
+import '../components/featured_playlists.dart';
+import '../components/singles.dart';
+import '../components/videos.dart';
 import '../components/albums.dart';
 import '../components/latest_release.dart';
 import '../components/related_artists.dart';
 import '../components/top_songs.dart';
-import '../data/constant.dart';
-import '../data/construct.dart';
-import '../data/translator.dart';
 
 class ArtistPage extends StatefulWidget {
   final String? artistPageId;
