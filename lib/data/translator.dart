@@ -160,31 +160,63 @@ Map<String, dynamic> extractSingles(dynamic rawData) {
 
 // Function to extract videos data from the JSON data
 Map<String, dynamic> extractVideos(dynamic rawData) {
-  final videos = rawData['contents']['singleColumnBrowseResultsRenderer']
-          ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-      ['contents'][4]['musicCarouselShelfRenderer'];
-  final videosBrowseID = videos['header']
-          ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
-      ['browseEndpoint']['browseId'];
-  final videosParams = videos['header']['musicCarouselShelfBasicHeaderRenderer']
-      ['navigationEndpoint']['browseEndpoint']['params'];
-  final videosList = videos['contents'];
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
 
-  return {
-    'videosBrowseID': videosBrowseID,
-    'videosParams': videosParams,
-    'videosList': videosList,
-  };
+  Map<String, dynamic> videosData = {};
+
+  for (final section in sections) {
+    if (section.containsKey('musicCarouselShelfRenderer')) {
+      final musicCarouselShelfRenderer = section['musicCarouselShelfRenderer'];
+      final title = musicCarouselShelfRenderer['header']
+                  ['musicCarouselShelfBasicHeaderRenderer']['title']['runs'][0]
+              ['text']
+          .toLowerCase();
+
+      if (title == 'videos') {
+        final videosBrowseID = musicCarouselShelfRenderer['header']
+                ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
+            ['browseEndpoint']['browseId'];
+        final videosParams = musicCarouselShelfRenderer['header']
+                ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
+            ['browseEndpoint']['params'];
+        final videosList = musicCarouselShelfRenderer['contents'];
+
+        videosData = {
+          'videosBrowseID': videosBrowseID,
+          'videosParams': videosParams,
+          'videosList': videosList,
+        };
+      }
+      continue;
+    }
+  }
+  return videosData;
 }
 
 // Function to extract featured on data from the JSON data
 Map<String, dynamic> extractFeaturedOn(dynamic rawData) {
-  final featuredOn = rawData['contents']['singleColumnBrowseResultsRenderer']
-          ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-      ['contents'][5]['musicCarouselShelfRenderer'];
-  return {
-    'featuredOnList': featuredOn,
-  };
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
+
+  List<dynamic> featuredOn = [];
+
+  for (final section in sections) {
+    if (section.containsKey('musicCarouselShelfRenderer')) {
+      final musicCarouselShelfRenderer = section['musicCarouselShelfRenderer'];
+      final title = musicCarouselShelfRenderer['header']
+                  ['musicCarouselShelfBasicHeaderRenderer']['title']['runs'][0]
+              ['text']
+          .toLowerCase();
+
+      if (title == 'featured on') {
+        final featuredOnList = musicCarouselShelfRenderer['contents'];
+        featuredOn = featuredOnList;
+      }
+      continue;
+    }
+  }
+  return {'featuredOnList': featuredOn};
 }
 
 // Function to extract related artists data from the JSON data
