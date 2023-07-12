@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 // Function to extract thumbnails from the JSON data
 Map<String, dynamic> extractThumbnails(dynamic rawData) {
   final thumbnails = rawData['header']['musicVisualHeaderRenderer']['thumbnail']
@@ -12,105 +10,152 @@ Map<String, dynamic> extractThumbnails(dynamic rawData) {
   };
 }
 
-// Function to extract artist data from the JSON data
-Map<String, dynamic> extractArtist(dynamic rawData) {
-  final artistBio = rawData['contents']['singleColumnBrowseResultsRenderer']
-          ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-      ['contents'][7]['musicDescriptionShelfRenderer'];
-  final artistName = rawData['header']['musicVisualHeaderRenderer']['title']
-      ['runs'][0]['text'];
-  final artistBioViewCounter = artistBio['subheader']['runs'][0]['text'];
-  final artistBioContent = artistBio['description']['runs'][0]['text'];
-  final artistBioContentShort = artistBioContent.substring(0, 80) + '...';
-  // TODO: MAYBE ADD EXTRACT THUMBNAIL HERE
-
-  return {
-    'artistName': artistName,
-    'artistBioViewCounter': artistBioViewCounter,
-    'artistBioContent': artistBioContent,
-    'artistBioContentShort': artistBioContentShort,
-  };
-}
-
 // Function to extract latest release data from the JSON data
 Map<String, dynamic> extractLatestRelease(dynamic rawData) {
-  final latestRelease = rawData['contents']['singleColumnBrowseResultsRenderer']
-              ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-          ['contents'][0]['musicSpotlightShelfRenderer']['contents'][0]
-      ['musicSpotlightItemRenderer'];
-  final latestReleaseThumbnails = latestRelease['thumbnailRenderer']
-      ['musicThumbnailRenderer']['thumbnail']['thumbnails'];
-  final latestReleaseTitle = latestRelease['title']['runs'][0]['text'];
-  final latestReleaseType = latestRelease['subtitle']['runs'][0]['text'];
-  final latestReleaseYear = latestRelease['subtitle']['runs'][2]['text'];
-  final latestReleaseBrowseID =
-      latestRelease['navigationEndpoint']['browseEndpoint']['browseId'];
-  //TODO: MAYBE NEED PARAMS ???
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
 
-  return {
-    'latestReleaseThumbnails': latestReleaseThumbnails,
-    'latestReleaseTitle': latestReleaseTitle,
-    'latestReleaseType': latestReleaseType,
-    'latestReleaseYear': latestReleaseYear,
-    'latestReleaseBrowseID': latestReleaseBrowseID,
-  };
+  Map<String, dynamic> latestReleaseData = {};
+
+  for (final section in sections) {
+    if (section.containsKey('musicSpotlightShelfRenderer')) {
+      final musicSpotlightShelfRenderer =
+          section['musicSpotlightShelfRenderer'];
+      final musicSpotlightItemRenderer = musicSpotlightShelfRenderer['contents']
+          [0]['musicSpotlightItemRenderer'];
+      final title =
+          musicSpotlightItemRenderer['header']['runs'][0]['text'].toLowerCase();
+
+      if (title == 'latest release') {
+        final latestReleaseThumbnails =
+            musicSpotlightItemRenderer['thumbnailRenderer']
+                ['musicThumbnailRenderer']['thumbnail']['thumbnails'];
+        final latestReleaseTitle =
+            musicSpotlightItemRenderer['title']['runs'][0]['text'];
+        final latestReleaseType =
+            musicSpotlightItemRenderer['subtitle']['runs'][0]['text'];
+        final latestReleaseYear =
+            musicSpotlightItemRenderer['subtitle']['runs'][2]['text'];
+        final latestReleaseBrowseID =
+            musicSpotlightItemRenderer['navigationEndpoint']['browseEndpoint']
+                ['browseId'];
+        //TODO: MAYBE NEED PARAMS ???
+
+        latestReleaseData = {
+          'latestReleaseThumbnails': latestReleaseThumbnails,
+          'latestReleaseTitle': latestReleaseTitle,
+          'latestReleaseType': latestReleaseType,
+          'latestReleaseYear': latestReleaseYear,
+          'latestReleaseBrowseID': latestReleaseBrowseID,
+        };
+        continue;
+      }
+    }
+  }
+  return latestReleaseData;
 }
 
-// Function to extract top songs data from the JSON data
 Map<String, dynamic> extractTopSongs(dynamic rawData) {
-  final topSongs = rawData['contents']['singleColumnBrowseResultsRenderer']
-          ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-      ['contents'][1]['musicShelfRenderer'];
-  final topSongsBrowseID = topSongs['moreContentButton']['buttonRenderer']
-      ['navigationEndpoint']['browseEndpoint']['browseId'];
-  final topSongsParams = topSongs['moreContentButton']['buttonRenderer']
-      ['navigationEndpoint']['browseEndpoint']['params'];
-  final topSongsList = topSongs['contents'];
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
 
-  return {
-    'topSongsBrowseID': topSongsBrowseID,
-    'topSongsParams': topSongsParams,
-    'topSongsList': topSongsList,
-  };
+  Map<String, dynamic> topSongsData = {};
+
+  for (final section in sections) {
+    if (section.containsKey('musicShelfRenderer')) {
+      final musicShelfRenderer = section['musicShelfRenderer'];
+      final title =
+          musicShelfRenderer['title']['runs'][0]['text'].toLowerCase();
+
+      if (title == 'top songs') {
+        final topSongs = musicShelfRenderer['contents'];
+        final browseId = musicShelfRenderer['moreContentButton']
+                ['buttonRenderer']['navigationEndpoint']['browseEndpoint']
+            ['browseId'];
+        final params = musicShelfRenderer['moreContentButton']['buttonRenderer']
+            ['navigationEndpoint']['browseEndpoint']['params'];
+
+        topSongsData = {
+          'topSongsBrowseID': browseId,
+          'topSongsParams': params,
+          'topSongsList': topSongs,
+        };
+        continue;
+      }
+    }
+  }
+  return topSongsData;
 }
 
 // Function to extract albums data from the JSON data
 Map<String, dynamic> extractAlbums(dynamic rawData) {
-  final albums = rawData['contents']['singleColumnBrowseResultsRenderer']
-          ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-      ['contents'][2]['musicCarouselShelfRenderer'];
-  final albumsBrowseID = albums['header']
-                  ['musicCarouselShelfBasicHeaderRenderer']
-              ['navigationEndpoint']?['browseEndpoint']?['browseId'];
-  final albumsParams = albums['header']['musicCarouselShelfBasicHeaderRenderer']
-      ['navigationEndpoint']?['browseEndpoint']?['params'];
-  final albumsList = albums['contents'];
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
 
-  return {
-    'albumsBrowseID': albumsBrowseID,
-    'albumsParams': albumsParams,
-    'albumsList': albumsList,
-  };
+  Map<String, dynamic> albumsData = {};
+
+  for (final section in sections) {
+    if (section.containsKey('musicCarouselShelfRenderer')) {
+      final musicCarouselShelfRenderer = section['musicCarouselShelfRenderer'];
+      final title = musicCarouselShelfRenderer['header']
+                  ['musicCarouselShelfBasicHeaderRenderer']['title']['runs'][0]
+              ['text']
+          .toLowerCase();
+
+      if (title == 'albums') {
+        final albumsBrowseID = musicCarouselShelfRenderer['header']
+                ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
+            ?['browseEndpoint']?['browseId'];
+        final albumsParams = musicCarouselShelfRenderer['header']
+                ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
+            ?['browseEndpoint']?['params'];
+        final albumsList = musicCarouselShelfRenderer['contents'];
+
+        albumsData = {
+          'albumsBrowseID': albumsBrowseID,
+          'albumsParams': albumsParams,
+          'albumsList': albumsList,
+        };
+      }
+      continue;
+    }
+  }
+  return albumsData;
 }
 
 // Function to extract singles data from the JSON data
 Map<String, dynamic> extractSingles(dynamic rawData) {
-  final singles = rawData['contents']['singleColumnBrowseResultsRenderer']
-          ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
-      ['contents'][3]['musicCarouselShelfRenderer'];
-  final singlesBrowseID = singles['header']
-          ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
-      ['browseEndpoint']['browseId'];
-  final singlesParams = singles['header']
-          ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
-      ['browseEndpoint']['params'];
-  final singlesList = singles['contents'];
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
 
-  return {
-    'singlesBrowseID': singlesBrowseID,
-    'singlesParams': singlesParams,
-    'singlesList': singlesList,
-  };
+  Map<String, dynamic> singlesData = {};
+
+  for (final section in sections) {
+    if (section.containsKey('musicCarouselShelfRenderer')) {
+      final musicCarouselShelfRenderer = section['musicCarouselShelfRenderer'];
+      final title = musicCarouselShelfRenderer['header']
+                  ['musicCarouselShelfBasicHeaderRenderer']['title']['runs'][0]
+              ['text']
+          .toLowerCase();
+      if (title == 'singles') {
+        final singlesBrowseID = musicCarouselShelfRenderer['header']
+                ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
+            ?['browseEndpoint']?['browseId'];
+        final singlesParams = musicCarouselShelfRenderer['header']
+                ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
+            ?['browseEndpoint']?['params'];
+        final singlesList = musicCarouselShelfRenderer['contents'];
+
+        singlesData = {
+          'singlesBrowseID': singlesBrowseID,
+          'singlesParams': singlesParams,
+          'singlesList': singlesList,
+        };
+      }
+      continue;
+    }
+  }
+  return singlesData;
 }
 
 // Function to extract videos data from the JSON data
@@ -152,4 +197,41 @@ Map<String, dynamic> extractRelatedArtists(dynamic rawData) {
   return {
     'relatedArtistsList': relatedArtists,
   };
+}
+
+// Function to extract artist data from the JSON data
+Map<String, dynamic> extractArtist(dynamic rawData) {
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
+
+  Map<String, dynamic> artistData = {};
+
+  for (final section in sections) {
+    if (section.containsKey('musicDescriptionShelfRenderer')) {
+      final musicDescriptionShelfRenderer =
+          section['musicDescriptionShelfRenderer'];
+      final title = musicDescriptionShelfRenderer['header']['runs'][0]['text']
+          .toLowerCase();
+
+      if (title == 'about') {
+        final artistName = rawData['header']['musicVisualHeaderRenderer']
+            ['title']['runs'][0]['text'];
+        final artistBioViewCounter =
+            musicDescriptionShelfRenderer['subheader']['runs'][0]['text'];
+        final artistBioContent =
+            musicDescriptionShelfRenderer['description']['runs'][0]['text'];
+        final artistBioContentShort = artistBioContent.substring(0, 80) + '...';
+        // TODO: MAYBE ADD EXTRACT THUMBNAIL HERE
+
+        artistData = {
+          'artistName': artistName,
+          'artistBioViewCounter': artistBioViewCounter,
+          'artistBioContent': artistBioContent,
+          'artistBioContentShort': artistBioContentShort,
+        };
+        break;
+      }
+    }
+  }
+  return artistData;
 }
