@@ -803,13 +803,11 @@ class _ArtistPageState extends State<ArtistPage> {
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           itemCount: relatedArtists['relatedArtistsList']
-                                      ['contents']
                                   ?.length ??
                               0,
                           itemBuilder: (context, index) {
                             final relatedArtistsList =
-                                relatedArtists['relatedArtistsList']
-                                    ['contents'];
+                                relatedArtists['relatedArtistsList'];
                             final relatedArtistsListTitle =
                                 relatedArtistsList?[index]
                                         ['musicTwoRowItemRenderer']['title']

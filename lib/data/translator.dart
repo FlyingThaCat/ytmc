@@ -221,11 +221,22 @@ Map<String, dynamic> extractFeaturedOn(dynamic rawData) {
 
 // Function to extract related artists data from the JSON data
 Map<String, dynamic> extractRelatedArtists(dynamic rawData) {
-  final relatedArtists = rawData['contents']
-              ['singleColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']
-          ['content']['sectionListRenderer']['contents'][6]
-      ['musicCarouselShelfRenderer'];
+  final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
+      ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
 
+  List<dynamic> relatedArtists = [];
+
+  for (final section in sections) {
+    if (section.containsKey('musicCarouselShelfRenderer')) {
+      final musicCarouselShelfRenderer = section['musicCarouselShelfRenderer'];
+      final title = musicCarouselShelfRenderer['header']['musicCarouselShelfBasicHeaderRenderer']['title']['runs'][0]['text'].toLowerCase();
+
+      if (title == 'fans might also like') {
+        final relatedArtistsList = musicCarouselShelfRenderer['contents'];
+        relatedArtists = relatedArtistsList;
+      }
+    }
+  }
   return {
     'relatedArtistsList': relatedArtists,
   };
