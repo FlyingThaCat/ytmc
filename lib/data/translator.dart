@@ -195,7 +195,7 @@ Map<String, dynamic> extractVideos(dynamic rawData) {
 }
 
 // Function to extract featured on data from the JSON data
-Map<String, dynamic> extractFeaturedOn(dynamic rawData) {
+Map<String, dynamic> extractFeaturedPlaylists(dynamic rawData) {
   final sections = rawData['contents']['singleColumnBrowseResultsRenderer']
       ['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'];
 

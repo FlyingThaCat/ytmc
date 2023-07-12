@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:ytmc/components/featured_playlists.dart';
 import 'package:ytmc/components/singles.dart';
+import 'package:ytmc/components/videos.dart';
 
 import '../components/albums.dart';
 import '../components/latest_release.dart';
@@ -61,7 +63,7 @@ class _ArtistPageState extends State<ArtistPage> {
           final albums = extractAlbums(data);
           final singles = extractSingles(data);
           final videos = extractVideos(data);
-          final featuredOn = extractFeaturedOn(data);
+          final featuredPlaylists = extractFeaturedPlaylists(data);
           final relatedArtists = extractRelatedArtists(data);
 
           return Scaffold(
@@ -142,222 +144,10 @@ class _ArtistPageState extends State<ArtistPage> {
                     TopSongsComponent(topSongs: topSongs),
                     AlbumsComponent(albums: albums),
                     SinglesComponent(singles: singles),
+                    VideosComponent(videos: videos),
+                    FeaturedPlaylistsComponent(featuredPlaylists: featuredPlaylists),
 
                     
-
-                    // videos
-                    const Padding(
-                      padding: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Videos',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // videos Carousel
-                    SizedBox(
-                      height: 200,
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(top: 2.5),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: videos['videosList']?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            final videosList = videos['videosList'];
-                            final videosListTitle = videosList?[index]
-                                    ['musicTwoRowItemRenderer']['title']['runs']
-                                [0]['text'];
-                            final videosListArtist = videosList?[index]
-                                    ['musicTwoRowItemRenderer']['subtitle']
-                                ['runs'][0]['text'];
-                            final videosViews = videosList?[index]
-                                    ['musicTwoRowItemRenderer']['subtitle']
-                                ['runs'][2]['text'];
-                            final videosListThumbnail = videosList?[index]
-                                            ['musicTwoRowItemRenderer']
-                                        ['thumbnailRenderer']
-                                    ['musicThumbnailRenderer']['thumbnail']
-                                ['thumbnails'][0]['url'];
-                            return Container(
-                              width: 225,
-                              margin: EdgeInsets.only(
-                                  top: 12, bottom: 2.5, left: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // add rounded corners to image and cover
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Container(
-                                      width: 225,
-                                      height: 127,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        // add background color to list tile
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                            videosListThumbnail?.toString() ??
-                                                '',
-                                          ),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: RichText(
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          text: TextSpan(
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                text: videosListTitle
-                                                        ?.toString() ??
-                                                    '',
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    videosListArtist?.toString() ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    videosViews?.toString() ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-
-                    // Featured channels
-                    const Padding(
-                      padding: EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Featured on',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Featured channels Carousel
-                    SizedBox(
-                      height: 230,
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(top: 2.5),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: featuredOn['featuredOnList']?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            final featuredChannelsList =
-                                featuredOn['featuredOnList'];
-                            final featuredChannelsListTitle =
-                                featuredChannelsList?[index]
-                                        ['musicTwoRowItemRenderer']['title']
-                                    ['runs'][0]['text'];
-                            final featuredChannelsListThumbnail =
-                                featuredChannelsList?[index]
-                                                ['musicTwoRowItemRenderer']
-                                            ['thumbnailRenderer']
-                                        ['musicThumbnailRenderer']['thumbnail']
-                                    ['thumbnails'][2]['url'];
-                            return Container(
-                              width: 160,
-                              margin: EdgeInsets.only(
-                                  top: 12, bottom: 2.5, left: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // add rounded corners to image and cover
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Container(
-                                      width: 160,
-                                      height: 160,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        // add background color to list tile
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                            featuredChannelsListThumbnail
-                                                    ?.toString() ??
-                                                '',
-                                          ),
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: RichText(
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          text: TextSpan(
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                text: featuredChannelsListTitle
-                                                        ?.toString() ??
-                                                    '',
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
 
                     // Related artists
                     const Padding(
