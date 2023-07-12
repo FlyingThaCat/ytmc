@@ -706,7 +706,7 @@ class _ArtistPageState extends State<ArtistPage> {
                           itemCount: featuredOn['featuredOnList']?.length ?? 0,
                           itemBuilder: (context, index) {
                             final featuredChannelsList =
-                                featuredOn['featuredOnList']['contents'];
+                                featuredOn['featuredOnList'];
                             final featuredChannelsListTitle =
                                 featuredChannelsList?[index]
                                         ['musicTwoRowItemRenderer']['title']
