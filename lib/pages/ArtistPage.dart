@@ -27,7 +27,7 @@ class ArtistPage extends StatefulWidget {
 
 class _ArtistPageState extends State<ArtistPage> {
   final body = constructAPIBody();
-  
+
   Future<Map<String, dynamic>> fetchData() async {
     // append browseId to body
     body['browseId'] = widget.artistPageId;
@@ -70,6 +70,7 @@ class _ArtistPageState extends State<ArtistPage> {
           final videos = extractVideos(data);
           final featuredPlaylists = extractFeaturedPlaylists(data);
           final relatedArtists = extractRelatedArtists(data);
+          
 
           return Scaffold(
             body: SingleChildScrollView(
@@ -144,23 +145,21 @@ class _ArtistPageState extends State<ArtistPage> {
                         ),
                       ],
                     ),
-  
-                    if(latestRelease.isNotEmpty)
-                    LatestReleaseComponent(latestRelease: latestRelease),
-                    if(topSongs.isNotEmpty)
-                    TopSongsComponent(topSongs: topSongs),
-                    if(albums.isNotEmpty)
-                    AlbumsComponent(albums: albums),
-                    if(singles.isNotEmpty)
-                    SinglesComponent(singles: singles),
-                    if(videos.isNotEmpty)
-                    VideosComponent(videos: videos),
-                    if(featuredPlaylists.isNotEmpty)
-                    FeaturedPlaylistsComponent(featuredPlaylists: featuredPlaylists),
-                    if(relatedArtists.isNotEmpty)
-                    RelatedArtistsComponent(relatedArtists: relatedArtists),
-                    if(artist.isNotEmpty)
-                    ArtistBioComponent(artistBio: artist, thumbails: thumbails),
+                    if (latestRelease.isNotEmpty)
+                      LatestReleaseComponent(latestRelease: latestRelease),
+                    if (topSongs.isNotEmpty)
+                      TopSongsComponent(topSongs: topSongs),
+                    if (albums.isNotEmpty) AlbumsComponent(albums: albums),
+                    if (singles.isNotEmpty) SinglesComponent(singles: singles),
+                    if (videos.isNotEmpty) VideosComponent(videos: videos),
+                    if (featuredPlaylists.isNotEmpty)
+                      FeaturedPlaylistsComponent(
+                          featuredPlaylists: featuredPlaylists),
+                    if (relatedArtists.isNotEmpty)
+                      RelatedArtistsComponent(relatedArtists: relatedArtists),
+                    if (artist.isNotEmpty && thumbails.isNotEmpty)
+                      ArtistBioComponent(
+                          artistBio: artist, thumbails: thumbails),
                   ],
                 ),
               ),

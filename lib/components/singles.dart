@@ -34,8 +34,11 @@ class SinglesComponent extends StatelessWidget {
               padding: const EdgeInsets.only(top: 2.5),
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
-              itemCount: singles['singlesList']?.length ?? 0,
+              itemCount: singles['singlesList']?.length != null
+                  ? singles['singlesList'].length + 1
+                  : 0,
               itemBuilder: (context, index) {
+                if (index < singles['singlesList']?.length) {
                 final singlesList = singles['singlesList'];
                 final singlesListTitle = singlesList?[index]
                     ['musicTwoRowItemRenderer']['title']['runs'][0]['text'];
@@ -110,6 +113,58 @@ class SinglesComponent extends StatelessWidget {
                     ],
                   ),
                 );
+                } else {
+                  return GestureDetector(
+                    onTap: () {
+                      // Handle "Show More" functionality
+                    },
+                    child: Container(
+                        width: 160,
+                        height: 160,
+                        margin: const EdgeInsets.only(
+                            top: 12, bottom: 2.5, left: 16),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 160,
+                              height: 160,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.black.withOpacity(0.5),
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.5),
+                                  ],
+                                ),
+                              ),
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_rounded,
+                                    color: Colors.white,
+                                    size: 40,
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'Show More',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                    ),
+                  );
+                }
               },
             ),
           ),

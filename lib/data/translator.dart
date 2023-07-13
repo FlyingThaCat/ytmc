@@ -176,10 +176,10 @@ Map<String, dynamic> extractVideos(dynamic rawData) {
       if (title == 'videos') {
         final videosBrowseID = musicCarouselShelfRenderer['header']
                 ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
-            ['browseEndpoint']['browseId'];
+            ?['browseEndpoint']?['browseId'];
         final videosParams = musicCarouselShelfRenderer['header']
                 ['musicCarouselShelfBasicHeaderRenderer']['navigationEndpoint']
-            ['browseEndpoint']['params'];
+            ?['browseEndpoint']?['params'];
         final videosList = musicCarouselShelfRenderer['contents'];
 
         videosData = {
@@ -229,7 +229,10 @@ Map<String, dynamic> extractRelatedArtists(dynamic rawData) {
   for (final section in sections) {
     if (section.containsKey('musicCarouselShelfRenderer')) {
       final musicCarouselShelfRenderer = section['musicCarouselShelfRenderer'];
-      final title = musicCarouselShelfRenderer['header']['musicCarouselShelfBasicHeaderRenderer']['title']['runs'][0]['text'].toLowerCase();
+      final title = musicCarouselShelfRenderer['header']
+                  ['musicCarouselShelfBasicHeaderRenderer']['title']['runs'][0]
+              ['text']
+          .toLowerCase();
 
       if (title == 'fans might also like') {
         final relatedArtistsList = musicCarouselShelfRenderer['contents'];
@@ -257,6 +260,7 @@ Map<String, dynamic> extractArtist(dynamic rawData) {
           .toLowerCase();
 
       if (title == 'about') {
+        print(rawData);
         final artistName = rawData['header']['musicVisualHeaderRenderer']
             ['title']['runs'][0]['text'];
         final artistBioViewCounter =
