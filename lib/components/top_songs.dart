@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/player_page.dart';
 
 class TopSongsComponent extends StatelessWidget {
   final Map<String, dynamic> topSongs;
@@ -43,33 +44,49 @@ class TopSongsComponent extends StatelessWidget {
                             ['musicTwoColumnItemRenderer']['thumbnail']
                         ['musicThumbnailRenderer']['thumbnail']['thumbnails'][1]
                     ['url'];
-                return ListTile(
-                  leading: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      // add background color to list tile
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          topSongsListThumbnail?.toString() ?? '',
+                final topSongsListVideoId = topSongsList?[index]
+                        ['musicTwoColumnItemRenderer']['navigationEndpoint']
+                    ['watchEndpoint']['videoId'];
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlayerPage(
+                          videoId: topSongsListVideoId,
                         ),
-                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                    leading: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        // add background color to list tile
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            topSongsListThumbnail?.toString() ?? '',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                  title: Text(
-                    topSongsListTitle?.toString() ?? '',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                    title: Text(
+                      topSongsListTitle?.toString() ?? '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  subtitle: Text(
-                    topSongsListSubtitle?.toString() ?? '',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
+                    subtitle: Text(
+                      topSongsListSubtitle?.toString() ?? '',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                 );
