@@ -117,22 +117,23 @@ class VideosComponent extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Container(
-                    width: 225,
-                    margin:
-                        const EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // add rounded corners to image and cover
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Container(
-                            width: 225,
-                            height: 127,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              gradient: LinearGradient(
+                  if (videos['videosParams'] != null) {
+                    return Container(
+                      width: 225,
+                      margin:
+                          const EdgeInsets.only(top: 12, bottom: 2.5, left: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // add rounded corners to image and cover
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Container(
+                              width: 225,
+                              height: 127,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                gradient: LinearGradient(
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
@@ -141,8 +142,8 @@ class VideosComponent extends StatelessWidget {
                                     Colors.black.withOpacity(0.5),
                                   ],
                                 ),
-                            ),
-                            child: const Column(
+                              ),
+                              child: const Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
@@ -160,12 +161,13 @@ class VideosComponent extends StatelessWidget {
                                     ),
                                   ),
                                 ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                        ],
+                      ),
+                    );
+                  }
                 }
               },
             ),

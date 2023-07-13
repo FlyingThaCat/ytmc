@@ -114,7 +114,8 @@ class SinglesComponent extends StatelessWidget {
                   ),
                 );
                 } else {
-                  return GestureDetector(
+                  if(singles['singlesParam'] != null) {
+                    return GestureDetector(
                     onTap: () {
                       // Handle "Show More" functionality
                     },
@@ -164,6 +165,7 @@ class SinglesComponent extends StatelessWidget {
                         ),
                     ),
                   );
+                  }
                 }
               },
             ),

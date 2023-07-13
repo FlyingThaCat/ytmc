@@ -116,11 +116,12 @@ class AlbumsComponent extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return GestureDetector(
-                    onTap: () {
-                      // Handle "Show More" functionality
-                    },
-                    child: Container(
+                  if (albums['albumsParams'] != null) {
+                    return GestureDetector(
+                      onTap: () {
+                        // Handle "Show More" functionality
+                      },
+                      child: Container(
                         width: 160,
                         height: 160,
                         margin: const EdgeInsets.only(
@@ -164,8 +165,9 @@ class AlbumsComponent extends StatelessWidget {
                             ),
                           ],
                         ),
-                    ),
-                  );
+                      ),
+                    );
+                  }
                 }
               },
             ),
