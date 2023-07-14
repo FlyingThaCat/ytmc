@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 // PAGES RELATED
 import 'data/construct.dart';
 import 'pages/ArtistPage.dart';
+import 'pages/player_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -199,8 +200,15 @@ class _HomePageState extends State<HomePage> {
                           } else {
                             musicObject['isArtist'] = 'false';
                           }
+                          
+                          final videoId = musicSuggestion[i]
+                                      ['musicTwoColumnItemRenderer']
+                                  ['navigationEndpoint']?['watchEndpoint']
+                              ?['videoId'];
+                          if (videoId != null) {
+                            musicObject['videoId'] = videoId;
+                          }
 
-                          // add the object to the list
                           musicSuggestionsList.add(musicObject);
                         }
 
@@ -272,6 +280,18 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                       );
+                                    } else {
+                                      // else add handler to play the music
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PlayerPage(
+                                            videoId: musicSuggestionsList[index]
+                                                ['videoId'],
+                                          ),
+                                        ),
+                                      );
+
                                     }
                                   },
 

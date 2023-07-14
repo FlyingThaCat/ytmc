@@ -5,3 +5,4 @@ const String ytmApiKey = 'AIzaSyAOghZGza2MQSZkY_zfZ370N-PUdXEo8AI';
 
 const String ytmSearchSuggestURL = '$ytmBaseURL/music/get_search_suggestions?key=$ytmApiKey';
 const String ytmBrowseURL = '$ytmBaseURL/browse?key=$ytmApiKey';
+const String ytmPlayerURL = '$ytmBaseURL/player?key=$ytmApiKey';

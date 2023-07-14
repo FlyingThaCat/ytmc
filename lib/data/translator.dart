@@ -282,3 +282,39 @@ Map<String, dynamic> extractArtist(dynamic rawData) {
   }
   return artistData;
 }
+
+// Function to extract streaming data from the JSON data
+Map<String, dynamic> extractStreamingData(dynamic rawData) {
+  Map<String, dynamic> streamingDatas = {};
+
+  //Get Streaming Details
+  final videoDetails = rawData['videoDetails'];
+  final videoId = videoDetails['videoId'];
+  final title = videoDetails['title'];
+  final lengthSeconds = videoDetails['lengthSeconds'];
+  final channelId = videoDetails['channelId'];
+  final thumbnails = videoDetails['thumbnail']['thumbnails'];
+  final viewCount = videoDetails['viewCount'];
+  final author = videoDetails['author'];
+
+  //Get StreamingData
+  final streamingData = rawData['streamingData'];
+  final expiresInSeconds = streamingData['expiresInSeconds'];
+  final formats = streamingData['formats'];
+  final adaptiveFormats = streamingData['adaptiveFormats'];
+
+  streamingDatas = {
+    'videoId': videoId,
+    'title': title,
+    'lengthSeconds': lengthSeconds,
+    'channelId': channelId,
+    'thumbnails': thumbnails,
+    'viewCount': viewCount,
+    'author': author,
+    'expiresInSeconds': expiresInSeconds,
+    'formats': formats,
+    'adaptiveFormats': adaptiveFormats,
+  };
+
+  return streamingDatas;
+}

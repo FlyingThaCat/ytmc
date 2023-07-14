@@ -37,6 +37,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^1.1.0
   dynamic_color: ^1.4.0
+  hive: ^2.2.3
+  just_audio: ^0.9.34
+  audio_session: ^0.1.16
+  just_audio_mpv: any
 
 dev_dependencies:
   flutter_test:
