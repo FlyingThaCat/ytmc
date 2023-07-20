@@ -54,6 +54,9 @@ class _PlayerPageState extends State<PlayerPage> {
         } else {
           final data = snapshot.data;
           final streamDatas = extractStreamingData(data);
+          debugPrint(streamDatas.toString());
+          audioPlayer.setUrl(streamDatas['adaptiveFormats'][16]['url']);
+          audioPlayer.play();
 
           return Scaffold(
             appBar: AppBar(
@@ -69,19 +72,64 @@ class _PlayerPageState extends State<PlayerPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                    onPressed: () async {
-                      await audioPlayer
-                          .setUrl(streamDatas['adaptiveFormats'][16]['url']);
-                      await audioPlayer.play();
-                    },  
-                    child: const Text('Play'),
+                  // add image
+                  Container(
+                    width: 250,
+                    height: 250,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          streamDatas['thumbnails'][3]['url'],
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                  TextButton(
-                    onPressed: () async {
-                      await audioPlayer.pause();
-                    },
-                    child: const Text('Pause'),
+                  // add title
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          streamDatas['title'],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      // add artist
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          streamDatas['author'],
+                          style: const TextStyle( 
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // add control button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          audioPlayer.play();
+                        },
+                        icon: const Icon(Icons.play_arrow),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          audioPlayer.pause();
+                        },
+                        icon: const Icon(Icons.pause),
+                      ),
+                    ],
                   ),
                 ],
               ),

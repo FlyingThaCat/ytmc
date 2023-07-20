@@ -260,7 +260,6 @@ Map<String, dynamic> extractArtist(dynamic rawData) {
           .toLowerCase();
 
       if (title == 'about') {
-        print(rawData);
         final artistName = rawData['header']['musicVisualHeaderRenderer']
             ['title']['runs'][0]['text'];
         final artistBioViewCounter =

@@ -10,7 +10,7 @@ import 'data/construct.dart';
 import 'pages/ArtistPage.dart';
 import 'pages/player_page.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
