@@ -70,7 +70,8 @@ class _ArtistPageState extends State<ArtistPage> {
           final videos = extractVideos(data);
           final featuredPlaylists = extractFeaturedPlaylists(data);
           final relatedArtists = extractRelatedArtists(data);
-          
+
+          print(artist);
 
           return Scaffold(
             body: SingleChildScrollView(

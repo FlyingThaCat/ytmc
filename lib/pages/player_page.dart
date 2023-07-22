@@ -20,7 +20,9 @@ class PlayerPage extends StatefulWidget {
 
 class _PlayerPageState extends State<PlayerPage> {
   final body = constructAPIBody();
-  final audioPlayer = AudioPlayer();
+  late AudioPlayer audioPlayer;
+  bool isPlaying = false;
+  bool _userTriggeredPlay = false;
 
   Future<Map<String, dynamic>> fetchData() async {
     // append videoId to body
@@ -32,6 +34,58 @@ class _PlayerPageState extends State<PlayerPage> {
     );
     final data = jsonDecode(response.body);
     return data;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer = AudioPlayer(); // Initialize audioPlayer here
+    setupAudioPlayer(widget.videoId); // Call the setup method
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.stop(); // Stop the audio when the page is disposed
+    audioPlayer.dispose(); // Dispose the audio player
+    super.dispose();
+  }
+
+  Future<void> setupAudioPlayer(String? videoId) async {
+    if (videoId == null) return;
+
+    // Fetch data from the API
+    body['videoId'] = videoId;
+    final response = await http.post(
+      Uri.parse(ytmPlayerURL),
+      headers: {'content-type': 'application/json'},
+      body: jsonEncode(body),
+    );
+    final data = jsonDecode(response.body);
+    final streamDatas = extractStreamingData(data);
+    // debugPrint(streamDatas.toString());
+
+    // Check if the audio player is playing before setting the URL
+    if (isPlaying) {
+      await audioPlayer.stop(); // Stop the player if it's currently playing
+    }
+
+    // Set the new audio URL and start playing
+    await audioPlayer.setUrl(streamDatas['adaptiveFormats'][16]['url']);
+
+    // Add a player state listener to update the isPlaying state and the icon
+    audioPlayer.playerStateStream.listen((playerState) {
+      // Check if the state change was triggered by user interaction
+      if (_userTriggeredPlay) {
+        setState(() {
+          isPlaying = playerState.playing;
+        });
+      }
+    });
+
+    // Update the isPlaying state
+    setState(() {
+      isPlaying = true;
+    });
   }
 
   @override
@@ -54,9 +108,7 @@ class _PlayerPageState extends State<PlayerPage> {
         } else {
           final data = snapshot.data;
           final streamDatas = extractStreamingData(data);
-          debugPrint(streamDatas.toString());
-          audioPlayer.setUrl(streamDatas['adaptiveFormats'][16]['url']);
-          audioPlayer.play();
+          // debugPrint(streamDatas.toString());
 
           return Scaffold(
             appBar: AppBar(
@@ -77,7 +129,7 @@ class _PlayerPageState extends State<PlayerPage> {
                     width: 250,
                     height: 250,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(15.0),
                       image: DecorationImage(
                         image: NetworkImage(
                           streamDatas['thumbnails'][3]['url'],
@@ -105,7 +157,7 @@ class _PlayerPageState extends State<PlayerPage> {
                         padding: const EdgeInsets.all(10),
                         child: Text(
                           streamDatas['author'],
-                          style: const TextStyle( 
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -113,23 +165,57 @@ class _PlayerPageState extends State<PlayerPage> {
                       ),
                     ],
                   ),
-                  // add control button
+                  // add control button and progress bar
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: () {
-                          audioPlayer.play();
+                        onPressed: () async {
+                          // Set the userTriggeredPlay variable to true before interaction
+                          _userTriggeredPlay = true;
+
+                          // Check if the audio is playing or paused and take the appropriate action
+                          if (isPlaying) {
+                            await audioPlayer.pause();
+                          } else {
+                            await audioPlayer.play();
+                          }
+
+                          // Reset the userTriggeredPlay variable after interaction
+                          _userTriggeredPlay = false;
                         },
-                        icon: const Icon(Icons.play_arrow),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          audioPlayer.pause();
-                        },
-                        icon: const Icon(Icons.pause),
+                        icon: isPlaying
+                            ? const Icon(Icons.pause)
+                            : const Icon(Icons.play_arrow),
                       ),
                     ],
+                  ),
+                  // StreamBuilder to show the progress bar
+                  StreamBuilder<Duration?>(
+                    stream: audioPlayer.positionStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final position = snapshot.data ?? Duration.zero;
+                        final totalDuration =
+                            audioPlayer.duration ?? Duration.zero;
+                        return Slider(
+                          value: position.inMilliseconds.toDouble(),
+                          min: 0,
+                          max: totalDuration.inMilliseconds.toDouble(),
+                          onChanged: (value) {
+                            audioPlayer
+                                .seek(Duration(milliseconds: value.toInt()));
+                          },
+                        );
+                      } else {
+                        return Slider(
+                          value: 0,
+                          min: 0,
+                          max: 1,
+                          onChanged: (value) {},
+                        );
+                      }
+                    },
                   ),
                 ],
               ),

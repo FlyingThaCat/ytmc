@@ -266,7 +266,7 @@ Map<String, dynamic> extractArtist(dynamic rawData) {
             musicDescriptionShelfRenderer['subheader']['runs'][0]['text'];
         final artistBioContent =
             musicDescriptionShelfRenderer['description']['runs'][0]['text'];
-        final artistBioContentShort = artistBioContent.substring(0, 80) + '...';
+        final artistBioContentShort = artistBioContent.length > 80 ? artistBioContent.substring(0, 80) + '...' : artistBioContent;
         // TODO: MAYBE ADD EXTRACT THUMBNAIL HERE
 
         artistData = {
