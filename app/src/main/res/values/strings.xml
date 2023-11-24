@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">YTMC</string>
+
+    <!-- Bottom Navigation -->
+    <string name="home">Home</string>
+    <string name="library">Library</string>
+    <string name="stats">Stats</string>
+    <string name="about">About</string>
+    <string name="dynamic_theme">Dynamic Theme</string>
+    <string name="settings">Settings</string>
+</resources>
